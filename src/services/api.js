@@ -2,11 +2,20 @@
 
 import axios from 'axios';
 
-const API_URL = '/api';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'http://3.35.238.62/api'  // EC2 인스턴스의 퍼블릭 IP 또는 도메인으로 변경하세요
+  : '/api';  // 개발 환경에서는 프록시 설정을 사용
+
+const api = axios.create({
+  baseURL: API_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
 
 export const fetchApiHome = async () => {
   try {
-    const response = await axios.get(`${API_URL}/`);
+    const response = await api.get('/');
     return response.data;
   } catch (error) {
     console.error('Error fetching API home:', error);
@@ -16,7 +25,7 @@ export const fetchApiHome = async () => {
 
 export const fetchData = async () => {
   try {
-    const response = await axios.get(`${API_URL}/data/`);
+    const response = await api.get('/data/');
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
